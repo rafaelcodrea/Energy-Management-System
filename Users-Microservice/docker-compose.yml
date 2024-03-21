@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  db-users:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'user'
+      MYSQL_ROOT_PASSWORD: 'heineken'
+    ports:
+      - "3308:3306"
+    volumes:
+      - my-db:/var/lib/mysql
+    networks:
+      demo_net:
+  spring-users:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_IP=db-users
+      - DB_PORT=3306
+      - DB_DBNAME=user
+      - DB_USER=root
+      - DB_PASSWORD=heineken
+    networks:
+      demo_net:
+        ipv4_address: 172.30.0.4
+
+volumes:
+  my-db:
+
+networks:
+  demo_net:
+    external: true
